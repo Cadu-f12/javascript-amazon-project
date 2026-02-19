@@ -1,7 +1,9 @@
 let productsHTML = '';
+let isAdded = false;
+let timeoutId;
 
 products.forEach((product) => {
-    productsHTML = productsHTML + `
+    productsHTML += `
         <div class="product-container">
           <div class="product-image-container">
             <img class="product-image"
@@ -16,7 +18,7 @@ products.forEach((product) => {
             <img class="product-rating-stars"
               src="images/ratings/rating-${product.rating.stars * 10}.png">
             <div class="product-rating-count link-primary">
-              ${product.rating.rating}
+              ${product.rating.count}
             </div>
           </div>
 
@@ -41,7 +43,7 @@ products.forEach((product) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added-menssage-${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -58,9 +60,10 @@ document.querySelector('.products-grid').innerHTML = productsHTML;
 
 document.querySelectorAll('.js-add-to-cart').forEach((addButton) => {
     addButton.addEventListener('click', () => {
-        const productId= addButton.dataset.productId;
+        const { productId } = addButton.dataset;
+        const addedMessageElem = document.querySelector(`.js-added-menssage-${productId}`);
         const selectorElem = document.querySelector(`.js-quantity-selector-${productId}`);
-        const quantitySelected = Number(selectorElem.value);
+        const quantity = Number(selectorElem.value);
 
         let cartQuantity = 0;
         let mathingItem;
@@ -72,18 +75,31 @@ document.querySelectorAll('.js-add-to-cart').forEach((addButton) => {
         })
 
         if (mathingItem) {
-            mathingItem.quantity += quantitySelected;
+            mathingItem.quantity += quantity;
         } else {
             cart.push({
-                productId: productId,
-                quantity: quantitySelected
+                productId,
+                quantity
             });
         }
-
-        
 
         cart.forEach(value => cartQuantity += value.quantity);
 
         document.querySelector('.cart-quantity').innerHTML = cartQuantity;
+
+        // Have a bug timeout HERE!
+
+        if (!isAdded) {
+            timeoutId = setTimeout(() => {
+                addedMessageElem.classList.remove('added-message');
+                isAdded = false;
+            }, 2000);
+            addedMessageElem.classList.add('added-message');
+            isAdded = true;
+        } else {
+            addedMessageElem.classList.add('added-message');
+            clearTimeout(timeoutId);
+            isAdded = false;
+        }
     })
 });

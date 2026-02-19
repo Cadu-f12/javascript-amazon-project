@@ -656,5 +656,19 @@ const products = [
       "apparel",
       "mens"
     ]
+  },
+  {
+    id: "8394881923e102934r9124f",
+    image: "images/products/umbrella.jpg",
+    name: "Umbrella",
+    rating: {
+      stars: 2,
+      count: 296800
+    },
+    priceCents: 67800,
+    keyword: [
+      "umbrella"
+    ]
   }
+
 ];
